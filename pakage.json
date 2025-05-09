@@ -1,0 +1,12 @@
+{
+  "name": "caesar-cipher-express",
+  "version": "1.0.0",
+  "description": "Caesar Cipher Tool with Express.js - Racer Dark Theme",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher Tool - Dark Racer Edition</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            margin: 0;
+            background-color: #181818; /* Dark gray - racer theme base */
+            color: #e0e0e0; /* Light gray text */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #cipher-container {
+            background-color: #2a2a2a; /* Slightly lighter dark gray */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); /* Professional shadow */
+            width: 100%;
+            max-width: 480px; /* Optimal width for a tool */
+            text-align: left;
+            border: 1px solid #404040; /* Subtle border */
+        }
+
+        #cipher-container h2 {
+            font-size: 22px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #cccccc; /* Lighter gray for heading */
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        #cipher-container label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+            color: #b0b0b0; /* Medium gray for labels */
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        #cipher-container input[type="text"],
+        #cipher-container input[type="number"] {
+            width: calc(100% - 22px); /* Full width minus padding */
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #505050; /* Darker border for inputs */
+            background-color: #202020; /* Very dark input background */
+            color: #e0e0e0; /* Light text in inputs */
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #cipher-container input[type="text"]:focus,
+        #cipher-container input[type="number"]:focus {
+            border-color: #777777; /* Brighter gray border on focus */
+            box-shadow: 0 0 0 2px rgba(100, 100, 100, 0.3); /* Subtle focus glow */
+            outline: none;
+        }
+
+        #cipher-container .buttons {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            display: flex; /* Align buttons nicely */
+            gap: 15px; /* Space between buttons */
+        }
+
+        #cipher-container button {
+            flex-grow: 1; /* Make buttons share space */
+            padding: 10px 18px;
+            border-radius: 5px;
+            border: 1px solid #555555; /* Button border */
+            background-color: #383838; /* Dark gray button background */
+            color: #e0e0e0; /* Light text on buttons */
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        #cipher-container button:hover {
+            background-color: #484848; /* Lighter gray on hover */
+            transform: translateY(-1px);
+        }
+        /* No need for specific decrypt button styling if we want uniform professional look */
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 8px;
+        }
+
+        .result-header h3 {
+            margin: 0;
+            color: #cccccc; /* Lighter gray for sub-heading */
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        #copy-result-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            background-color: #383838; /* Consistent with other buttons */
+            color: #e0e0e0;
+            border: 1px solid #555555;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #copy-result-btn:hover {
+            background-color: #484848;
+        }
+
+        #copy-result-btn.copied {
+            background-color: #28a745; /* Standard success green - provides good feedback */
+            color: white;
+            border-color: #28a745;
+        }
+
+        #result-text-container {
+            padding: 12px;
+            background-color: #202020; /* Very dark background like inputs */
+            border-radius: 5px;
+            min-height: 25px;
+            max-height: 120px;
+            overflow-y: auto;
+            word-wrap: break-word;
+            border: 1px dashed #505050; /* Dashed border for output area */
+            color: #d0d0d0; /* Output text color */
+        }
+
+        #result-text-container #result {
+            font-size: 14px;
+            white-space: pre-wrap;
+            margin: 0;
+        }
+
+        #error-message {
+            margin-top: 18px;
+            color: #ff6666; /* Standard error red */
+            font-weight: bold;
+            text-align: center;
+            min-height: 20px;
+            font-size: 13px;
+        }
+
+        /* --- Mobile Friendliness --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Less padding on small screens */
+                align-items: flex-start; /* Align to top on mobile if keyboard pushes content */
+            }
+            #cipher-container {
+                padding: 20px;
+                margin-top: 10px; /* Add some top margin */
+            }
+            #cipher-container h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            #cipher-container label {
+                font-size: 12px;
+                margin-top: 15px;
+            }
+            #cipher-container input[type="text"],
+            #cipher-container input[type="number"] {
+                padding: 9px;
+                font-size: 13px;
+            }
+            #cipher-container .buttons {
+                flex-direction: column; /* Stack buttons vertically */
+            }
+            #cipher-container button {
+                font-size: 13px;
+                padding: 10px 15px; /* Adjust padding for stacked buttons */
+            }
+            .result-header h3 {
+                font-size: 14px;
+            }
+            #copy-result-btn {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+            #result-text-container {
+                max-height: 100px;
+            }
+            #result-text-container #result {
+                font-size: 13px;
+            }
+            #error-message {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="cipher-container">
+        <h2>Caesar Cipher Utility</h2>
+        <div><label for="message">Input Message:</label><input type="text" id="message" placeholder="Enter alphabetic text & spaces"></div>
+        <div><label for="shift">Shift Value (1-25):</label><input type="number" id="shift" min="1" max="25" value="3"></div>
+        <div id="error-message"></div>
+        <div class="buttons">
+            <button id="encrypt-btn">Encrypt</button>
+            <button id="decrypt-btn">Decrypt</button>
+        </div>
+        <div class="result-header">
+            <h3>Output:</h3>
+            <button id="copy-result-btn" title="Copy to Clipboard">Copy</button>
+        </div>
+        <div id="result-text-container"><p id="result"></p></div>
+    </div>
+
+    <script>
+        // --- Global Variables for Caesar Cipher ---
+        let messageInput, shiftInput, encryptBtn, decryptBtn, resultP, errorDiv, copyBtn;
+
+        // --- Caesar Cipher Functions ---
+        function validateInputs() {
+            errorDiv.textContent = '';
+            const message = messageInput.value;
+            const shiftStr = shiftInput.value;
+
+            // Allow empty message for initial state, but error if user clears it after typing
+            if (message.trim() === "" && message.length > 0 && !message.includes(" ")) {
+                 // This condition seems complex, simplifying:
+                 // If the message consists only of spaces but is not empty, it's valid (spaces are preserved).
+                 // If it's truly empty, it's an error.
+            } else if (message.length === 0) { // Check if message is strictly empty
+                 errorDiv.textContent = 'Input Message cannot be empty.';
+                 return null;
+            }
+
+            for (let i = 0; i < message.length; i++) {
+                if (!/^[a-zA-Z]$/.test(message[i]) && message[i] !== ' ') {
+                    errorDiv.textContent = 'Message: Use alphabetic characters or spaces only. Invalid: "' + message[i] + '"';
+                    return null;
+                }
+            }
+
+            const shift = parseInt(shiftStr);
+            if (isNaN(shift) || shift < 1 || shift > 25) {
+                errorDiv.textContent = 'Shift Value: Must be an integer between 1 and 25.';
+                return null;
+            }
+            return { message, shift };
+        }
+
+        function caesarCipher(text, shift, encrypt) {
+            let result_str = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (char === ' ') {
+                    result_str += ' ';
+                    continue;
+                }
+                // Ensure character is alphabetic before processing
+                if (!/^[a-zA-Z]$/.test(char)) {
+                    result_str += char; // Preserve non-alphabetic characters if any slipped through validation (should not happen with current validation)
+                    continue;
+                }
+                let code = text.charCodeAt(i);
+                let base = (code >= 65 && code <= 90) ? 65 : 97; // Uppercase or lowercase base
+                let shiftedCode;
+                if (encrypt) {
+                    shiftedCode = ((code - base + shift) % 26) + base;
+                } else {
+                    shiftedCode = ((code - base - shift + 26) % 26) + base; // +26 for handling negative results
+                }
+                result_str += String.fromCharCode(shiftedCode);
+            }
+            return result_str;
+        }
+
+        // --- DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            messageInput = document.getElementById('message');
+            shiftInput = document.getElementById('shift');
+            encryptBtn = document.getElementById('encrypt-btn');
+            decryptBtn = document.getElementById('decrypt-btn');
+            resultP = document.getElementById('result');
+            errorDiv = document.getElementById('error-message');
+            copyBtn = document.getElementById('copy-result-btn');
+
+            encryptBtn.addEventListener('click', () => {
+                const inputs = validateInputs();
+                if (inputs) {
+                    resultP.textContent = caesarCipher(inputs.message, inputs.shift, true);
+                } else {
+                    resultP.textContent = ''; // Clear result on error
+                }
+            });
+
+            decryptBtn.addEventListener('click', () => {
+                const inputs = validateInputs();
+                if (inputs) {
+                    resultP.textContent = caesarCipher(inputs.message, inputs.shift, false);
+                } else {
+                    resultP.textContent = ''; // Clear result on error
+                }
+            });
+
+            copyBtn.addEventListener('click', () => {
+                 if (resultP.textContent) {
+                    navigator.clipboard.writeText(resultP.textContent)
+                        .then(() => {
+                            copyBtn.textContent = 'Copied!';
+                            copyBtn.classList.add('copied');
+                            setTimeout(() => {
+                                copyBtn.textContent = 'Copy';
+                                copyBtn.classList.remove('copied');
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy text: ', err);
+                            copyBtn.textContent = 'Fail!';
+                             setTimeout(() => {
+                                copyBtn.textContent = 'Copy';
+                            }, 1500);
+                        });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
